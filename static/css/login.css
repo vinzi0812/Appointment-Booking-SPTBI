@@ -1,5 +1,10 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 @import url("https://fonts.googleapis.com/css2?family=Anuphan:wght@500&display=swap");
+
+html{
+  width: 100%;
+}
+
 .login-page {
   width: 360px;
   padding: 8% 0 0;
@@ -93,7 +98,8 @@ body {
   font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; 
-  margin: 0 !important;     
+  margin: 0 !important;  
+  width: 100%; 
 }
 .h {
   display: flex;
@@ -109,8 +115,20 @@ body {
 
 .logo{
   height: 100%;
+  width: 30%;
 }
 
 .logo img {
-  max-height : 100%;
+  max-width : 100%;
+  max-height: 100%;
+  margin: auto auto;
+}
+
+.h h2{
+  margin-right: 2rem;
+}
+
+.msg{
+  font-family: Anuphan;
+  padding-top: 1rem;
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Appointment Booking | SPTBI</title>
+    <title>Booking | SPTBI</title>
     <link rel="stylesheet" href="{% static 'css/cal.css' %}" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
@@ -16,13 +16,14 @@
 
   </head>
   <body>
+    <input type="hidden" name="status" class="status" id="status" value="{{status}}">
     <div class="h d-flex justify-content-between align-items-center">
       <div class="logo">
         <a href="{% url 'index' %}">
         <img src="{% static 'assets/logo.png'%}" alt="Logo" />
         </a>
       </div>
-  <h2 class="text-center">Appointment Booking</h2>
+  <h2 class="text-center">Booking</h2>
   <div class="dropdown">
     <a class="btn btn-light log dropdown-toggle" href="#" role="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
       <i class="fas fa-user"></i>
@@ -71,16 +72,16 @@
       <div class="date-picker-container">
               <form action="{% url 'index' %}" method="POST" id="form4">
         {% csrf_token %}
-    <input type="date" name="form4" class="myDate" id="myDate" />
-              </form>
-  </div>
+        <input type="date" name="form4" class="myDate" id="myDate" />
+                  </form>
+      </div>
 
     </div>
     <table id="calendar" class="table table-bordered">
       <thead>
         <tr class="text-center">
           <th class="slot">Time Slot</th>
-          <th>Meeting Room - 1st Floor</th>
+          <th>Meeting Room 1 - 1st Floor</th>
           <th>Meeting Room 1 - 2nd Floor</th>
           <th>Meeting Room 2 - 2nd Floor</th>
         </tr>

@@ -29,7 +29,7 @@
         <img src="{% static 'assets/logo.png'%}" alt="Logo" />
         </a>
       </div>
-      <h2 class="text-center">Appointment Booking</h2>
+      <h2 class="text-center">Booking</h2>
       <div class="dropdown">
         <a
           class="btn btn-light log dropdown-toggle"
@@ -83,17 +83,40 @@
       </div>
     </div>
       {% if user.is_staff %}
-      <table>
+      <table class="admin">
+      <thead>
+        <th style="width: 25%;"><i class="fas fa-user"></i>&nbsp Startup Name</th>
+        <th style="width: 20%;"><i class="fas fa-envelope"></i> &nbsp Email</th>
+        <th style="text-align:right; width:12.5%;"><i class="fas fa-clock"></i> Hours Used </th>
+        <th style="text-align:right; width:15%;"><i class="fas fa-clock"></i> Total Free Hours</th>
+        <th style="width: 10%;">Charges </th>
+        <th style="width: 12.5%;">Status </th>
+        <th style="width: 5%;">Edit</th>
+      </thead>
       {% for i in objs %}
       <tr>
+        
+        <td > {{ i.first_name }}</td>
+        <td >{{ i.email }}</td>
+        <td style="text-align:right;">{{ i.free_slots }} Hours &nbsp &nbsp</td>
+        <td style="text-align:right;">{{i.total}} Hours &nbsp &nbsp</td>
+        <td>Rs.{{i.charges}}0</td>
+        <td>
+          <form action="" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="email" id="email" value="{{i.email}}"/>
+          {% if i.lock == 0 %}
+          <input type="hidden" name="lock" id="lock" value="1" />
+          <button class="edit-btn" type="submit" name="form4"><i class="fas fa-unlock"></i> Unlocked</button>     
+          {% else %}
+          <input type="hidden" name="lock" id="lock" value="0" />
+          <button class="edit-btn" type="submit" name="form4"><i class="fas fa-lock"></i> Locked</button>
+          {% endif %}
+          </form>
+        </td>
         <form action="" method="POST">
           {% csrf_token %}
-        <td><i class="fas fa-user"></i> &nbsp {{ i.first_name }} {{i.last_name}}</td>
-        <td><i class="fas fa-envelope"></i> &nbsp {{ i.email }}</td>
-        <input type="hidden" name="email" id="email" value="{{i.email}}"/>
-        <td><i class="fas fa-clock"></i> &nbsp Hours Used: {{ i.free_slots }}</td>
-        <td><i class="fas fa-clock"></i> &nbsp Total Free Hours  : {{i.total}}</td>
-        <td><i class="fas fa-rupee-sign"></i> &nbsp Charges : Rs.{{i.charges}}</td>
+          <input type="hidden" name="email" id="email" value="{{i.email}}"/>
         <td><button class="edit-btn" type="submit" name="form1">Edit</button></td>
         </form>
       </tr>
@@ -113,7 +136,7 @@
     </td>
     <td>
       <div class="profile">
-        <h1 class="user-name">{{user.first_name}} {{user.last_name}}</h1>
+        <h2 class="user-name">{{user.first_name}} {{user.last_name}}</h2>
       </div>
     </td>
   </tr>
@@ -163,7 +186,7 @@
     </td>
     <td>
       <div class="slots-info">
-        <p class="free-slots">Charges: Rs.{{charges}}</p>
+        <p class="free-slots">Charges: Rs.{{charges}}0</p>
       </div>
     </td>
   </tr>
@@ -185,45 +208,122 @@
           <h2>Booking Log</h2>
           <ul class="log-list">
             <li>
-              <h3>&nbsp &nbsp This Month</h3>
-              <ul class="date-list">
+              <h3>This Month</h3>
+              <table class="date-list">
+                <thead>
+                  <th style="width:14%"><i class="fas fa-calendar"></i> &nbsp Date</th>
+                  <th style="width:12%"><i class="fas fa-clock"></i> &nbsp Slot</th>
+                  <th style="width:25%"><i class="fas fa-building"></i> &nbsp Room</th>
+                  <th><i class="fas fa-bullseye"></i> &nbsp Reason</th>
+                </thead>
                 {% for i in timeslots %}
                 {% if i.room == 0 %}
-                <li>
-                  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp<i class="fas fa-calendar"></i> &nbsp {{i.date}} &nbsp | <i class="fas fa-clock"></i> &nbsp {{i.slot}} &nbsp | <i class="fas fa-building"></i> &nbsp Meeting Room 1 - 1st Floor | <i class="fas fa-bullseye"></i>  Reason : {{i.reason}}
-                </li>
+                <tr>
+                  <td>
+                    {{i.date}} 
+                  </td> 
+                  <td>
+                    {{i.slot}} 
+                  </td>
+                  <td>
+                    Meeting Room 1 - 1st Floor
+                  </td>
+                  <td>
+                    {{i.reason}}
+                  </td>
+                </tr>
                 {% elif i.room == 1 %}
-                <li>
-                  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp<i class="fas fa-calendar"></i> &nbsp {{i.date}} &nbsp | <i class="fas fa-clock"></i> &nbsp {{i.slot}} &nbsp | <i class="fas fa-building"></i> &nbsp Meeting Room 1 - 2nd Floor | <i class="fas fa-bullseye"></i> Reason : {{i.reason}}
-                </li>
+                <tr>
+                  <td>
+                    {{i.date}} 
+                  </td> 
+                  <td>
+                    {{i.slot}} 
+                  </td>
+                  <td>
+                    Meeting Room 1 - 1st Floor
+                  </td>
+                  <td>
+                    {{i.reason}}
+                  </td>
+                </tr>
                 {% else %}
-                <li>
-                  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp<i class="fas fa-calendar"></i> &nbsp {{i.date}} &nbsp | <i class="fas fa-clock"></i> &nbsp {{i.slot}} &nbsp | <i class="fas fa-building"></i> &nbsp Meeting Room 2 - 2nd Floor | <i class="fas fa-bullseye"></i> Reason : {{i.reason}}
-                </li>
+                <tr>
+                  <td>
+                    {{i.date}} 
+                  </td> 
+                  <td>
+                    {{i.slot}} 
+                  </td>
+                  <td>
+                    Meeting Room 1 - 1st Floor
+                  </td>
+                  <td>
+                    {{i.reason}}
+                  </td>
+                </tr>
                 {% endif %}
                 {% endfor %}
-              </ul>
+              </table>
             </li>
             <li>
-              <h3>&nbsp &nbsp Previous Month</h3>
-              <ul class="date-list">
+              <h3>Previous Month</h3>
+              <table class="date-list">
+                <thead>
+                  <th style="width:14%"><i class="fas fa-calendar"></i> &nbsp Date</th>
+                  <th style="width:12%"><i class="fas fa-clock"></i> &nbsp Slot</th>
+                  <th style="width:25%"><i class="fas fa-building"></i> &nbsp Room</th>
+                  <th><i class="fas fa-bullseye"></i> &nbsp Reason</th>
+                </thead>
                 {% for i in timeslotspm %}
                 {% if i.room == 0 %}
-                <li>
-                  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp <i class="fas fa-calendar"></i> &nbsp {{i.date}} &nbsp | <i class="fas fa-clock"></i> &nbsp {{i.slot}} &nbsp | <i class="fas fa-building"></i> &nbsp Meeting Room 1 - 1st Floor | <i class="fas fa-bullseye"></i>  Reason : {{i.reason}}
-                </li>
+                <tr>
+                  <td>
+                    {{i.date}} 
+                  </td> 
+                  <td>
+                    {{i.slot}} 
+                  </td>
+                  <td>
+                    Meeting Room 1 - 1st Floor
+                  </td>
+                  <td>
+                    {{i.reason}}
+                  </td>
+                </tr>
                 {% elif i.room == 1 %}
-                <li>
-                  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp <i class="fas fa-calendar"></i> &nbsp {{i.date}} &nbsp | <i class="fas fa-clock"></i> &nbsp {{i.slot}} &nbsp | <i class="fas fa-building"></i> &nbsp Meeting Room 1 - 2nd Floor | <i class="fas fa-bullseye"></i> Reason : {{i.reason}}
-                </li>
+                <tr>
+                  <td>
+                    {{i.date}} 
+                  </td> 
+                  <td>
+                    {{i.slot}} 
+                  </td>
+                  <td>
+                    Meeting Room 1 - 1st Floor
+                  </td>
+                  <td>
+                    {{i.reason}}
+                  </td>
+                </tr>
                 {% else %}
-                <li>
-                  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp <i class="fas fa-calendar"></i> &nbsp {{i.date}} &nbsp | <i class="fas fa-clock"></i> &nbsp {{i.slot}} &nbsp | <i class="fas fa-building"></i> &nbsp Meeting Room 2 - 2nd Floor | <i class="fas fa-bullseye"></i> Reason : {{i.reason}}
-                </li>
+                <tr>
+                  <td>
+                    {{i.date}} 
+                  </td> 
+                  <td>
+                    {{i.slot}} 
+                  </td>
+                  <td>
+                    Meeting Room 1 - 1st Floor
+                  </td>
+                  <td>
+                    {{i.reason}}
+                  </td>
+                </tr>
                 {% endif %}
                 {% endfor %}
-                </li>
-              </ul>
+              </table>
             </li>
           </ul>
         </div>

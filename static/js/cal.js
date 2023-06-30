@@ -8,6 +8,21 @@ document.addEventListener("DOMContentLoaded", function() {
   var month = parseInt(dateParts[1]) - 1; // Months are zero-based (0-11)
   var day = parseInt(dateParts[2]);
   var currentDate = new Date(year, month, day);
+  var options = {
+    timeZone: "Asia/Kolkata",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+  var istDate = currentDate.toLocaleString("en-IN", options).substring(0,10);
+  var listDate=istDate.split("/");
+  document.getElementById("myDate").value = listDate[2]+"-"+listDate[1]+"-"+listDate[0];
+  var status = document.getElementById("status").value;
+  console.log(status);
+  console.log(typeof status);
   // var prebooked = [
   //   {r: 1, c: 0},
   //   {r: 1, c: 1},
@@ -90,9 +105,11 @@ document.addEventListener("DOMContentLoaded", function() {
     var cell = document.getElementsByClassName("table-cells");
     for (var i = 0; i < cell.length; i++) {
       if (cell[i].innerHTML.trim()==="" && dateboolean && isLessThanTwoMonthsDifference(selectedDate, thisDate)) {
+        if(status === "0"){
         cell[i].addEventListener("mousedown", handleMouseDown);
         cell[i].addEventListener("mouseover", handleMouseOver);
         cell[i].addEventListener("mouseup", handleMouseUp);
+        }
       }
       else if (cell[i].innerHTML.trim() === "Booked by You") {
         //add grey background color

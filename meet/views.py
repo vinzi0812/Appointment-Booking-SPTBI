@@ -14,6 +14,10 @@ def index(request):
     #list of times from 9am to 9pm in intervals of 30 mins
     times = ["09.00 am", "09.30 am","10.00 am", "10.30 am", "11.00 am", "11.30 am", "12.00 pm", "12.30 pm", "01.00 pm", "01.30 pm", "02.00 pm", "02.30 pm","03.00 pm", "03.30 pm","04.00 pm", "04.30 pm","05.00 pm", "05.30 pm","06.00 pm", "06.30 pm","07.00 pm", "07.30 pm","08.00 pm", "08.30 pm"]
     date = datetime.now().strftime("%Y-%m-%d")
+    status = 0
+    user = request.user
+    if user.is_authenticated:
+        status = FreeSlot.objects.get(email = user.email).lock
     if request.method=="POST":
         if 'form1' in request.POST:
             date = request.POST.get("dateinput")
@@ -40,16 +44,18 @@ def index(request):
                 room = int(j[2])
                 print(slot, room, date)
                 x = aTimeSlot.objects.create(slot=slot, room = room, date = date, name = name, email = user.email, month = month, year = year, reason = reason)
-                u.free_slots -= 0.5
-                u.charges = u.free_slots * -300 if u.free_slots < 0 else 0
+                u.free_slots += 0.5
                 x.save()
+                u.save()
+            if u.free_slots > u.total:
+                u.lock = 1
                 u.save()
         elif 'form4' in request.POST:
             date = request.POST.get("dateinput")
     timeslots = aTimeSlot.objects.filter(date = date)
     num = range(24)
     r = range(3)
-    return render(request, 'cal.html', {'timeslots':timeslots, 'num':num, 'r': r, 'date': date, 'times': times})
+    return render(request, 'cal.html', {'timeslots':timeslots, 'num':num, 'r': r, 'date': date, 'times': times, 'status':status})
 
 def delete_slot(request):
     times = ["09.00 am", "09.30 am","10.00 am", "10.30 am", "11.00 am", "11.30 am", "12.00 pm", "12.30 pm", "01.00 pm", "01.30 pm", "02.00 pm", "02.30 pm","03.00 pm", "03.30 pm","04.00 pm", "04.30 pm","05.00 pm", "05.30 pm","06.00 pm", "06.30 pm","07.00 pm", "07.30 pm","08.00 pm", "08.30 pm"]
@@ -96,6 +102,11 @@ def profile(request):
             return redirect(reverse('edit_user') + f'?email={email}')
         elif 'form2' in request.POST:
             return redirect('change_password')
+        elif 'form4' in request.POST:
+            email = request.POST.get("email")
+            u = FreeSlot.objects.get(email = email)
+            u.lock = int(request.POST.get("lock"))
+            u.save()
     user = request.user
     free_hours = FreeSlot.objects.get(email = user.email).free_slots
     charges = FreeSlot.objects.get(email = user.email).charges
@@ -182,7 +193,7 @@ def download_table_as_excel(request):
 
     # Write the table data
     for row, obj in enumerate(objs, start=1):
-        data = [obj.first_name, obj.last_name, obj.email, obj.free_slots, obj.total, obj.charges]
+        data = [obj.first_name, obj.last_name, obj.email, obj.free_slots, obj.total, str(obj.charges)+'0']
         for col, value in enumerate(data):
             worksheet.write(row, col, value)
 
@@ -192,21 +203,26 @@ def download_table_as_excel(request):
 
 
 def loginuser(request):
+    msg=""
     if request.method == "POST":
+        msg="Wrong Credentials!"
         email = request.POST.get('email')
         password = request.POST.get('password')
-        user = User.objects.get(email = email)  
-        if user is not None:
-            if user.password == password:
-                print("Successful")
-                login(request, user)
-                return redirect("index")
-            else:
-                return render(request, 'login.html')
+        try:
+            user = User.objects.get(email = email)  
+            if user is not None:
+                if user.password == password:
+                    print("Successful")
+                    login(request, user)
+                    return redirect("index")
+                else:
+                    return render(request, 'login.html', {'msg':msg})
+        except User.DoesNotExist:
+            return render(request, 'login.html', {'msg':msg})
         else:
-            return render(request, 'login.html')
+            return render(request, 'login.html', {'msg':msg})
     else:
-       return render(request, "login.html")
+       return render(request, "login.html", {'msg':msg})
     
 def logoutuser(request):
     logout(request)
@@ -217,12 +233,11 @@ def adduser(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
         free_hours = request.POST.get('free')
-        user = User.objects.create(email = email, password = password, first_name = first_name, last_name=last_name, username = first_name+last_name)
-        obj = FreeSlot.objects.create(email = email, total=free_hours, free_slots = free_hours, charges = 0)
+        user = User.objects.create(email = email, password = password, first_name = first_name, username = first_name)
+        obj = FreeSlot.objects.create(email = email, total=free_hours, free_slots = free_hours, charges = 0, first_name=first_name)
         user.save()
         obj.save()
-        return redirect("index")
+        return redirect("adduser")
     else:
         return render(request, "adduser.html")
