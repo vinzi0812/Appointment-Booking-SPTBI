@@ -103,29 +103,26 @@ body {
 }
 .h {
   display: flex;
-  justify-content:space-between;
+  justify-content: space-between;
   color: white;
   background-color: #336eda;
   align-items: center;
   font-family: Anuphan;
   text-align: center;
   padding: 15px;
-  height:80px;
+  height: 80px;
 }
 
 .logo{
   height: 100%;
-  width: 30%;
 }
 
 .logo img {
-  max-width : 100%;
   max-height: 100%;
-  margin: auto auto;
 }
 
 .h h2{
-  margin-right: 2rem;
+  margin-right: 1rem;
 }
 
 .msg{

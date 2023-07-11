@@ -43,10 +43,14 @@ def index(request):
                 slot = j[1]
                 room = int(j[2])
                 print(slot, room, date)
-                x = aTimeSlot.objects.create(slot=slot, room = room, date = date, name = name, email = user.email, month = month, year = year, reason = reason)
-                u.free_slots += 0.5
-                x.save()
-                u.save()
+                b= aTimeSlot.objects.filter(slot=slot, room = room, date = date)
+                if b:
+                    continue
+                else:
+                    x = aTimeSlot.objects.create(slot=slot, room = room, date = date, name = name, email = user.email, month = month, year = year, reason = reason)
+                    u.free_slots += 0.5
+                    x.save()
+                    u.save()
             if u.free_slots > u.total:
                 u.lock = 1
                 u.save()
@@ -79,7 +83,7 @@ def delete_slot(request):
                 j = i.split("-")
                 slot = j[1]
                 room = int(j[2])
-                a = aTimeSlot.objects.get(slot=slot, room = room, date = date)
+                a = aTimeSlot.objects.filter(slot=slot, room = room, date = date)
                 a.delete()
                 u.free_slots += 0.5
                 u.charges = u.free_slots * -300 if u.free_slots < 0 else 0
@@ -138,7 +142,7 @@ def edit_user(request):
     if request.method=="POST":
         if 'form1' in request.POST:
             first_name = request.POST.get('first_name')
-            last_name = request.POST.get('last_name')
+            last_name = ""
             email = request.POST.get("email")
             password = request.POST.get("password")
             free = request.POST.get("free")
@@ -153,7 +157,8 @@ def edit_user(request):
             us.email = email
             us.save()
             return redirect('profile')
-        elif 'form2' in request.POST:
+        else:
+            print('Hello')
             email = request.POST.get('email')
             us = User.objects.get(email =email)
             a = aTimeSlot.objects.filter(email = email)
@@ -234,7 +239,7 @@ def adduser(request):
         password = request.POST.get('password')
         first_name = request.POST.get('first_name')
         free_hours = request.POST.get('free')
-        user = User.objects.create(email = email, password = password, first_name = first_name, username = first_name)
+        user = User.objects.create(email = email, password = password, first_name = first_name, username = first_name, last_name = "")
         obj = FreeSlot.objects.create(email = email, total=free_hours, free_slots = free_hours, charges = 0, first_name=first_name)
         user.save()
         obj.save()

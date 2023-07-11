@@ -27,7 +27,8 @@ SECRET_KEY = 'django-insecure-&8&r2__8926u0(cf!m&a#l-*35k5n0a=m*ekk&6ir!$@5o77#3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['https://booking.sptbi.com',
+                 'https://www.booking.sptbi.com/',]
 
 # Application definition
 
